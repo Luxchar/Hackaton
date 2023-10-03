@@ -110,6 +110,9 @@ export default defineConfig((env) => ({
     publicDir: 'static',
     base: './',
     root,
+    server: {
+        port: 8080
+    },
     plugins: [
         viteStaticCopy({
             targets: [
