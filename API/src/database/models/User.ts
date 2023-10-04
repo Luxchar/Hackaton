@@ -3,12 +3,10 @@ import mongoose, {Document, Schema} from "mongoose";
 export interface IUser { // This is the interface for the user in the database
     user_id: number;
     token: string;
+    mail?: string;
     username: string;
     password: string;
     avatar?: string;
-    friends_requests_sent?: number[];
-    friends_requests_received?: number[];
-    friends?: number[];
     
     last_connection?: string;
     updated_at?: string;

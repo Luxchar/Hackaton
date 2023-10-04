@@ -6,33 +6,30 @@ import Emitter from "../../client/emitter.client"
 import bcrypt from "bcrypt"
 import UTILS from "../../utils"
 
+import Ticket from "../../database/models/Ticket"
+
 export const ticketGet = async (req: express.Request, res: express.Response) => { // Connect a user
     try {
-        const { username, password } = req.body
+        const token = req.token
 
-        // if username or password badly formatted
-        if(!username || !password || username.length >= UTILS.CONSTANTS.USER.USERNAME.MAX_LENGTH || username.length <= UTILS.CONSTANTS.USER.USERNAME.MIN_LENGTH ||
-            password.length >= UTILS.CONSTANTS.USER.PASSWORD.MAX_LENGTH || password.length <= UTILS.CONSTANTS.USER.PASSWORD.MIN_LENGTH) throw "Badly formatted"
-
-        var User = await DB.users.find.username(username)
-
-        var match = false
-        if(User) match = await bcrypt.compare(password, User.password)
-
-        if (!match || !User) {
-            Logger.warn(`A user tried to log in with an invalid password from ${req.headers['x-forwarded-for'] || req.connection.remoteAddress} !`)
-            Emitter.emit("connect", null, req.headers['x-forwarded-for'] || req.connection.remoteAddress) 
-            throw "Username or password invalid"
+        if (!token) {
+            throw "Badly formatted"
         }
 
-        User.last_connection = new Date().toLocaleString()
-        User.save() //update the last connection date of the user in the database
+        var User = await DB.users.find.token(token)
+        if (!User) throw "An error has happened"
+        
+        var tickets = await Ticket.find({}) // find all tickets
+
+        if (!tickets) {
+            throw "No tickets found"
+        }
 
         res.json(
             new RouteResponse()
                 .setStatus(Status.success)
-                .setMessage(`Successfully connect to the user ${username}`)
-                .setData(User)
+                .setMessage(`Successfully found ${tickets.length} tickets`)
+                .setData(tickets)
         )
     }
 

@@ -1,5 +1,6 @@
 import { ErrorRouter } from "../errors/"
 import { UserRouter } from "../users"
+import { TicketRouter } from "../tickets/router.tickets"
 
 export const Intercept = { // Intercept the requests and responses and route them to the right function, this is the main router and all the other routers are children of this router
     ROOT: {
@@ -8,6 +9,7 @@ export const Intercept = { // Intercept the requests and responses and route the
             path: "api", // CLIENT SIDE ROUTES
 
             Users: UserRouter, // USER ROUTES
+            Tickets: TicketRouter // TICKET ROUTES
     
         },
         

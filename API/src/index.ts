@@ -4,7 +4,6 @@ import { config }from "./config"
 import Database from "./database"
 import Controller from "./routers/controller/router.controller"
 import "./console"
-import Channel from "./database/models/Channel"
 
 export * from "./routers"
 export * from "./config"

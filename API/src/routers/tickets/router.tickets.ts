@@ -10,7 +10,7 @@ export const TicketRouter = {
         method: "POST",
         socketing: false,
         path: "/create",
-        params: ["token", "title", "content"],
+        params: [],
         res: TicketIntercept.create
     },
 
@@ -20,7 +20,7 @@ export const TicketRouter = {
         method: "GET",
         socketing: false,
         path: "/get",
-        params: ["token", "ticket_id"],
+        params: [],
         res: TicketIntercept.get
     }
 

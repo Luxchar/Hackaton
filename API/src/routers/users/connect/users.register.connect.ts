@@ -12,7 +12,8 @@ import UTILS from "../../../utils"
 
 export const userRegister = async (req: express.Request, res: express.Response) => { // Register a new user
     try {
-        const { username, password } = req.body
+        console.log('rrrr')
+        const { username, password, mail} = req.body
 
         // if username or password badly formatted
         if(!username || !password || username.length >= UTILS.CONSTANTS.USER.USERNAME.MAX_LENGTH || username.length <= UTILS.CONSTANTS.USER.USERNAME.MIN_LENGTH ||

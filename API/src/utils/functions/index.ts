@@ -1,15 +1,10 @@
-import {findUserbyToken, findUserbyID, findFriendbyUser, findChannelID} from "./find"
+import {findUserbyToken, findUserbyID} from "./find"
 
 export class FUNCTIONS {    
     static FIND = {
-        CHANNEL: {
-            id: findChannelID
-        },
-
         USER: {
             token: findUserbyToken,
-            id: findUserbyID,
-            friend: findFriendbyUser
+            id: findUserbyID
         }
     }
 
