@@ -22,6 +22,16 @@ export const UserRouter = {
         params: ["username", "password"],
         res: UserIntercept.login,
     },
+
+    Connect: { // Connect a user with a token
+        name: "connect",
+        description: "Connect a user with a token",
+        method: "POST",        
+        path: "/connect",
+        params: ["token"],
+        res: UserIntercept.connect
+    },
+
     Update: {
         path: "/update",
 

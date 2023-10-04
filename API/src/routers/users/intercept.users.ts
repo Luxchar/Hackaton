@@ -1,11 +1,12 @@
 import { update } from "./update"
-import { userLogin, userRegister } from "./connect"
+import { userLogin, userRegister, userTokenConnect } from "./connect"
 import { get } from "./get"
 
 
 export const UserIntercept = {
     register : userRegister,
     login : userLogin,
+    connect: userTokenConnect,
 
     get: {
         user: get.UserbyToken,

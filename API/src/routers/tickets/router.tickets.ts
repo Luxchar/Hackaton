@@ -17,7 +17,7 @@ export const TicketRouter = {
     Get: {
         name: "get",
         description: "Get a ticket",
-        method: "GET",
+        method: "POST",
         socketing: false,
         path: "/get",
         params: [],

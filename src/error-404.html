@@ -13,4 +13,10 @@
     </div>
 </div>
 
+<script>
+    // remove local storage
+    localStorage.removeItem('token');
+    window.location.href = 'auth-login.html';
+</script>
+
 {% endblock %}

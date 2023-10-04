@@ -55,6 +55,57 @@ class Hackaton {
         });
       });
     }
+
+    connect(token) {
+      return new Promise((resolve, reject) => {
+          fetch(`${window.CONFIG.API_URL}/client/connect`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              token
+            }),
+        }).then((response) => {
+            response.json().then((data) => {
+              if (response.status === 200) {
+                resolve(data);
+              } else {
+                reject(data);
+              }
+            });
+        })
+        .catch((error) => {
+          reject(error);
+        });
+      });
+    }
+
+     reportGet(token) {
+      return new Promise((resolve, reject) => {
+        fetch(`${window.CONFIG.API_URL}/tickets/get`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            token
+          }),
+      }).then((response) => {
+          response.json().then((data) => {
+            if (response.status === 200) {
+              resolve(data);
+            } else {
+              reject(data);
+            }
+          });
+      })
+      .catch((error) => {
+        reject(error);
+      });
+    });
+    }
   }
+  
   
   const hackaton = new Hackaton();
