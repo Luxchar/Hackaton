@@ -1,30 +1,42 @@
-async function loginForm() {
-    console.log('login');
-  
-    const username = document.querySelector(`${"#username"}`).value;
-    const password = document.querySelector(`${"#password"}`).value;
-  
-    console.log(username, password);
-  
-    const response = await fetch(`${window.CONFIG.API_URL}/client/login`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ username, password }),
-    });
+try {
 
-    console.log(response)
+  var username = "#username"
+  var password = "#password"
+  var button = ".submit-input"
 
-    const user = await response.json();
+  var usernameSelector = document.querySelector(`${username}`)
+  var passwordSelector = document.querySelector(`${password}`)
+  var buttonListener = document.querySelector(`${button}`)
 
-    console.log(user)
-  
-    if (user.status === 'error') {
-      window.location.href = 'http://localhost:8080/auth-login.html';
-      return console.log('null');
-    } else {
-      localStorage.setItem('token', user.token);
-      // window.location.href = 'http://localhost:8080/index.html';
-    }
+  buttonListener.addEventListener('click', async function() {
+      try {
+          console.log("IN")
+
+          const response = await hackaton.login(usernameSelector.value, passwordSelector.value)
+          
+          console.log(response)
+
+
+          if (response.status === 'error') {
+              console.log("ERROR")
+              document.querySelector('#error-login').innerHTML = response.message
+              return console.log('null');
+          } else {
+            console.log("OK")
+            localStorage.setItem('token', response.data.token);
+            setTimeout(() => {
+              window.location.href = '/index.html';
+          }, 100) 
+          }
+          
+          usernameSelector.value = ""
+          passwordSelector.value = ""
+      } catch (error) {
+        console.log("IN HERE")
+          console.error(error)
+          document.querySelector('#error-login').innerHTML = error.message
+      }
+  })
+} catch (error) {
+  console.error(error)
 }

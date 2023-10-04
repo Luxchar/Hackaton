@@ -1,31 +1,46 @@
-async function registerForm() {
+try {
+
+  var email = "#email"
+  var username = "#username"
+  var password = "#password"
+  var passwordverify = "#passwordverify"
+  var button = ".submit-input"
+
+  var emailSelector = document.querySelector(`${email}`) 
+  var usernameSelector = document.querySelector(`${username}`)
+  var passwordSelector = document.querySelector(`${password}`)
+  var passwordverifySelector = document.querySelector(`${passwordverify}`)
   
-    const username = document.querySelector(`${"#username"}`).value;
-    const password = document.querySelector(`${"#password"}`).value;
-    const email = document.querySelector(`${"#email"}`).value;
-  
-    console.log(username, password, email);
-  
-    console.log(`${window.CONFIG.API_URL}/client/register`)
+  var buttonListener = document.querySelector(`${button}`)
 
-    const response = await fetch(`${window.CONFIG.API_URL}/client/register`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ username, password, email }),
-    });
+  buttonListener.addEventListener('click', async function() {
+      try {
+          console.log("IN")
 
-    console.log(response)
+          const response = await hackaton.register(usernameSelector.value, emailSelector.value, passwordSelector.value)
 
-    const user = await response.json();
-
-    console.log(user)
-  
-    if (user.status === 'error') {
-        return console.log('null');
-    }
-
-    localStorage.setItem('token', user.token);
-    // window.location.href = 'http://localhost:8080/index.html';
+          console.log(response)
+          if (response.status === 'error') {
+            window.location.href = 'http://localhost:8080/auth-login.html';
+            console.log("HEREEE")
+            document.querySelector('#error-login').innerHTML = response.message 
+            return console.log('null');
+          } else {
+            localStorage.setItem('token', response.data.token);
+            setTimeout(() => {
+              window.location.href = '/index.html';
+          }, 100) 
+          }
+          
+          usernameSelector.value = ""
+          passwordSelector.value = ""
+      } catch (error) {
+          console.error(error)
+          document.querySelector('#error-login').innerHTML = error.message
+      }
+  })
+} catch (error) {
+  console.error(error)
+  console.log("ERROR")
+  document.querySelector('#error-login').innerHTML = error.message
 }

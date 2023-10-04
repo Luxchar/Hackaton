@@ -17,6 +17,7 @@ export interface IUserModel extends IUser, Document {}
 
 const UserSchema = new Schema({
     user_id: { type: Number, required: true, unique: true, index: true },
+    mail: { type: String, required: false, unique: true, index: true },
     token: { type: String, required: true, unique: true, index: true },
     username: { type: String, required: true, unique: false, index: true },
     password: { type: String, required: true },
