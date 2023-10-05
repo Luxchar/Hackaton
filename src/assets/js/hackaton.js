@@ -105,6 +105,36 @@ class Hackaton {
       });
     });
     }
+
+    reportCreate(postal_code, address, city, type, description, token) {
+      return new Promise((resolve, reject) => {
+        fetch(`${window.CONFIG.API_URL}/tickets/create`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            postal_code,
+            address,
+            city,
+            type,
+            description,
+            token
+          }),
+      }).then((response) => {
+          response.json().then((data) => {
+            if (response.status === 200) {
+              resolve(data);
+            } else {
+              reject(data);
+            }
+          });
+      })
+      .catch((error) => {
+        reject(error);
+      });
+    });
+    }
   }
   
   

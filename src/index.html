@@ -5,6 +5,21 @@
 
 {% block styles %}
 <link rel="stylesheet" href="/assets/scss/iconly.scss">
+<!-- Incluez la bibliothèque Leaflet -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<!-- Incluez le plugin Leaflet.markercluster -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.1/MarkerCluster.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.1/MarkerCluster.Default.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.1/leaflet.markercluster.js"></script>
+
+<style>
+    #map {
+        width: 100%;
+        height: 50vh;
+    }
+</style>
 {% endblock %}
 
 {% block content %}
@@ -84,7 +99,67 @@
                     </div>
                 </div>
             </div>
-            <div class="row">
+
+            <div id="map"></div>
+            <script>
+                var apiUrl = 'https://parisdata.opendatasoft.com/api/explore/v2.1/catalog/datasets/dans-ma-rue/records?limit=100'; // Modification : Augmenter la limite de résultats
+        
+                // Créez une carte Leaflet
+                var map = L.map('map').setView([48.86, 2.34], 12);
+        
+                // Ajoutez une couche de tuiles OpenStreetMap
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                }).addTo(map);
+        
+                // Créez un groupe de marqueurs cluster
+                var markers = L.markerClusterGroup();
+        
+                // Effectuez la requête GET à l'API OpenDataSoft
+                fetch(apiUrl)
+                    .then(response => {
+                        if (response.ok) {
+                            // La requête a réussi, parse la réponse JSON
+                            response.json()
+                                .then(data => {
+                                    // Vérifiez si data.results est défini et est un tableau
+                                    if (data.results && Array.isArray(data.results)) {
+                                        // Boucle à travers les données et ajoute un marqueur pour chaque coordonnée
+                                        data.results.forEach(result => {
+                                            if (result.geo_point_2d) {
+                                                var lon = result.geo_point_2d.lon;
+                                                var lat = result.geo_point_2d.lat;
+                                                var type = result.type
+                                                var adresse = result.adresse
+        
+                                                // Utilisez lon et lat pour créer un nouveau marqueur
+                                                var marker = L.marker([lat, lon])
+                                                .bindPopup("Type : " + type + "<br>" + ' Adresse : ' + adresse);
+        
+                                                // Ajoutez le marqueur au groupe de marqueurs cluster
+                                                markers.addLayer(marker);
+                                            }
+                                        });
+        
+                                        // Ajoutez le groupe de marqueurs cluster à la carte
+                                        map.addLayer(markers);
+                                    } else {
+                                        console.error('Aucun enregistrement trouvé dans la réponse de l\'API.');
+                                    }
+                                });
+                        } else {
+                            // La requête a échoué, affiche un message d'erreur dans la console
+                            console.error('La requête à l\'API OpenDataSoft a échoué.');
+                        }
+                    })
+                    .catch(error => {
+                        // Erreur lors de la requête, affiche un message d'erreur dans la console
+                        console.error('Erreur lors de la requête : ' + error);
+                    });
+            </script>
+
+            <br>
+            <!-- <div class="row">
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header">
@@ -95,85 +170,43 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> -->
             <div class="row">
                 <div class="col-12 col-xl-4">
                     <div class="card">
                         <div class="card-header">
-                            <h4>Reports Location</h4>
+                            <h4>Reports Highlights</h4>
                         </div>
                         <div class="card-body">
                             <div class="row">
-                                <div class="col-7">
+                                <div class="col-15">
                                     <div class="d-flex align-items-center">
                                         <svg class="bi text-primary" width="32" height="32" fill="blue"
                                             style="width:10px">
                                             <use
                                                 xlink:href="assets/static/images/bootstrap-icons.svg#circle-fill" />
                                         </svg>
-                                        <h5 class="mb-0 ms-3">Nanterre</h5>
+                                        <h5 class="mb-0 ms-3">Le nord est de Paris est le plus touché par les problèmes de propreté</h5>
                                     </div>
                                 </div>
-                                <div class="col-5">
-                                    <h5 class="mb-0 text-end">862</h5>
+                                <div>‏‏‎ ‎</div>
+                                <div class="col-15">
+                                    <div class="d-flex align-items-center">
+                                        <svg class="bi text-primary" width="32" height="32" fill="blue"
+                                            style="width:10px">
+                                            <use
+                                                xlink:href="assets/static/images/bootstrap-icons.svg#circle-fill" />
+                                        </svg>
+                                        <h5 class="mb-0 ms-3">Recrudescence de cas de punaise à lit dans le sud ouest de Paris</h5>
+                                    </div>
                                 </div>
-                                <div class="col-12">
+                                
+                                <!-- <div class="col-5">
+                                    <h5 class="mb-0 text-end"></h5>
+                                </div> -->
+                                <!-- <div class="col-12">
                                     <div id="chart-europe"></div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-7">
-                                    <div class="d-flex align-items-center">
-                                        <svg class="bi text-success" width="32" height="32" fill="blue"
-                                            style="width:10px">
-                                            <use
-                                                xlink:href="assets/static/images/bootstrap-icons.svg#circle-fill" />
-                                        </svg>
-                                        <h5 class="mb-0 ms-3">Puteaux</h5>
-                                    </div>
-                                </div>
-                                <div class="col-5">
-                                    <h5 class="mb-0 text-end">375</h5>
-                                </div>
-                                <div class="col-12">
-                                    <div id="chart-america"></div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-7">
-                                    <div class="d-flex align-items-center">
-                                        <svg class="bi text-success" width="32" height="32" fill="blue"
-                                            style="width:10px">
-                                            <use
-                                                xlink:href="assets/static/images/bootstrap-icons.svg#circle-fill" />
-                                        </svg>
-                                        <h5 class="mb-0 ms-3">India</h5>
-                                    </div>
-                                </div>
-                                <div class="col-5">
-                                    <h5 class="mb-0 text-end">625</h5>
-                                </div>
-                                <div class="col-12">
-                                    <div id="chart-india"></div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-7">
-                                    <div class="d-flex align-items-center">
-                                        <svg class="bi text-danger" width="32" height="32" fill="blue"
-                                            style="width:10px">
-                                            <use
-                                                xlink:href="assets/static/images/bootstrap-icons.svg#circle-fill" />
-                                        </svg>
-                                        <h5 class="mb-0 ms-3">Indonesia</h5>
-                                    </div>
-                                </div>
-                                <div class="col-5">
-                                    <h5 class="mb-0 text-end">1025</h5>
-                                </div>
-                                <div class="col-12">
-                                    <div id="chart-indonesia"></div>
-                                </div>
+                                </div> -->
                             </div>
                         </div>
                     </div>
@@ -201,10 +234,10 @@
                                                     </div>
                                                     <p class="font-bold ms-3 mb-0" id="city_1">Si Cantik</p>
                                                 </div> -->
-                                                    <p class="font-bold ms-3 mb-0" id="city_0">Si Cantik</p>
+                                                    <p class="font-bold ms-3 mb-0" id="city_0"></p>
                                             </td>
                                             <td class="col-auto">
-                                                <p class=" mb-0" id="description_0">Objet plein de punaise de lit à Porte de la Chapelle</p>
+                                                <p class=" mb-0" id="description_0"></p>
                                             </td>
                                         </tr>
                                         <tr>
@@ -296,14 +329,14 @@
                     </div>
                 </div>
             </div>  -->
-            <div class="card">
+            <!-- <div class="card">
                 <div class="card-header">
                     <h4>Reports Repartition</h4>
                 </div>
                 <div class="card-body">
                     <div id="chart-visitors-profile"></div>
                 </div>
-            </div>
+            </div> -->
         </div>
     </section>
 </div>

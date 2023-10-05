@@ -1,8 +1,6 @@
-<h1 align="center">Mazer Dashboard</h1>
+<h1 align="center">ParisPropre</h1>
 
 ![Mazer Screenshot](https://user-images.githubusercontent.com/45036724/167523601-9d20fb17-1989-488f-b619-cb53c0db8898.png)
-
-<p align="center">Mazer is an Admin Dashboard Template that can help you develop faster. Made with Bootstrap 5. No jQuery dependency.</p>
 
 # Table of content
 
@@ -13,17 +11,28 @@
 - [License](#license)
 
 ## Introduction
-This project is a barebone but efficient template for an API in typescript made with the precious help of [Bylife](https://github.com/Bylife), it uses a custom routing system and is built to use it along MongoDB. It integrates every types of request you can think of, websockets, and will integrate webrtc in the future.
+ParisPropre is a project done under 3 days making use of the [data](https://opendata.paris.fr/pages/home/) Paris makes public about its streets and their cleanliness. The goal of this project is to make a website that allows users to see the cleanliness of the streets of Paris and to report any problems they see on the streets.
 
 ## Installation
-Make sure you have installed **typescript** on your system and **npm**, then head over to the root of the project and type ```npm install```
+Make sure you have installed **typescript** on your system and **npm**, then head over to the root of the project and type ```npm i```
+
+In order to run the API you need to install the dependencies in the api folder, so head over to the api folder and type ```npm i```
 <br>
 You **need** to create a .env file and add the mongodb tokens
-<br><br>
+
+**Example:**
+```
+MONGO_URL=mongodb+srv://<USERNAME>:<PASSWORD>@x
+MONGO_USERNAME=x
+MONGO_PASSWORD=x
+
+BASE_URI=x (optional)
+```
+<br>
 If you have any problems with the installation, you can open an issue in this repository.
 
 ## Usage
-Run ```npm nodemon``` to run the project !
+Run ```npm start``` in /API to run the API and ```npm run dev``` in the root of the project to run the website.
 
 ## Contributing
 If you want to contribute to this project you can fork this repository and make a pull request with your changes.
