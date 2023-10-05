@@ -10,14 +10,19 @@ async function fetchTickets() {
   if (User.status === 'error') {
     window.location.href = 'http://localhost:8080/auth-login.html';
   }
-
   ticket = await hackaton.reportGet(token)
   console.log(ticket)
 
-  document.querySelector('#user_count').innerHTML = ticket.data.user_count;
-  document.querySelector('#ticket_count').innerHTML = ticket.data.ticket_count;
-  document.querySelector("#ticket_today").innerHTML = ticket.data.ticket_count_today;
-  document.querySelector("#ticket_month").innerHTML = ticket.data.ticket_count_month;
+  document.querySelector('#user_count').innerHTML = ticket.data.user_count
+  document.querySelector('#ticket_total').innerHTML = ticket.data.ticket_total;
+  document.querySelector("#ticket_today").innerHTML = ticket.data.tickets_count_today.length;
+  document.querySelector("#ticket_month").innerHTML = ticket.data.tickets_count_month.length;
+
+  for (i = 0; i < 4; i++) {
+    document.querySelector('#' + 'city_' + i).innerHTML = ticket.data.last_four_tickets[i].ville;
+    document.querySelector('#' + 'description_' + i).innerHTML = ticket.data.last_four_tickets[i].soustype;
+  }
+
 }
 
 fetchTickets()
