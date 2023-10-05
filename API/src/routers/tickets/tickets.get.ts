@@ -12,112 +12,33 @@ export const ticketGet = async (req: express.Request, res: express.Response) => 
     try {
         const token = req.body.token
 
-        if (!token) {
-            throw "Badly formatted"
-        }
+        if (!token) throw "Badly formatted"
 
         var user = await User.findOne({ token: token })
         if (!user) throw "An error has happened"
         
         // count all tickets
-        const tickets = await Ticket.countDocuments();
-        console.log(tickets)
-        const users = await User.countDocuments();
-        const lastFourTickets = await Ticket.find({})
-            .sort({ datedecl: -1 }) 
-            .limit(4)               
-            .exec();
+        const tickets = await Ticket.countDocuments(); // total tickets
+        const users = await User.countDocuments(); // total users
+        const lastFourTickets = await Ticket.find({}).sort({ datedecl: -1 }).limit(4).exec(); // last four tickets
 
         const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        const tomorrow = new Date(today);
-        tomorrow.setDate(tomorrow.getDate() + 1);
+        const totalTicketsToday = await Ticket.countDocuments({ datedecl: { $gte: new Date(today.getFullYear(), today.getMonth(), today.getDate()), $lt: new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1) } }); // total tickets today
+        const totalTicketsMonth = await Ticket.countDocuments({ datedecl: { $gte: new Date(today.getFullYear(), today.getMonth(), 1), $lt: new Date(today.getFullYear(), today.getMonth() + 1, 1) } }); // total tickets this month
         
-        const totalTicketsToday = await Ticket.countDocuments({
-            datedecl: { $gte: today, $lt: tomorrow }
-        });
-
-        const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-        const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 1);
-        const oneMonthAgo = new Date(today.getFullYear(), today.getMonth() - 1, today.getDate());
-
-            const dailyTotals = await Ticket.aggregate([
-                {
-                    $group: {
-                        _id: "$datedecl",
-                        count: { $sum: 1 } 
-                    }
-                },
-                {
-                    $sort: { _id: 1 }
-                }
-            ]).exec();   
-            
-        const oneYearAgo = new Date(today.getFullYear() - 1, today.getMonth(), today.getDate());
-
-        const monthlyReports = await Ticket.aggregate([
-            {
-                $match: {
-                    datedecl: { $gte: oneMonthAgo, $lt: today }
-                }
-            },
-            {
-                $group: {
-                    _id: { year: { $year: "$datedecl" }, month: { $month: "$datedecl" } },
-                    count: { $sum: 1 }
-                }
-            },
-            {
-                $sort: { "_id.year": 1, "_id.month": 1 }
-            }
-        ]).exec();
-        
-        const monthlyReports12 = await Ticket.aggregate([
-            {
-                $match: {
-                    datedecl: { $gte: oneYearAgo, $lt: today }
-                }
-            },
-            {
-                $group: {
-                    _id: { year: { $year: "$datedecl" }, month: { $month: "$datedecl" } },
-                    count: { $sum: 1 }
-                }
-            },
-            {
-                $sort: { "_id.year": 1, "_id.month": 1 }
-            }
-        ]).exec();
-            
-        const mostReportedCitiesOfTheMonth = await Ticket.aggregate([
-            {
-                $match: {
-                    datedecl: { $gte: startOfMonth, $lt: endOfMonth }
-                }
-            },
-            {
-                $group: {
-                    _id: "$ville",
-                    count: { $sum: 1 }
-                }
-            },
-            {
-                $sort: { count: -1 }
-            },
-            {
-                $limit: 4
-            }
-        ]).exec();
-            
+        const totalTicketsYear = await Ticket.countDocuments({ datedecl: { $gte: new Date(today.getFullYear(), 0, 1), $lt: new Date(today.getFullYear() + 1, 0, 1) } }); // total tickets this year
+        console.log(totalTicketsYear)
         const struct = {
             user_count: users, // total users
-            tickets_count: totalTicketsToday, // total tickets today
-            monthly_reports: monthlyReports, // total tickets this month
-            tickets_reports_12_months: monthlyReports12, // array of reports for the last 12 months
-            tickets_four_most_reported_cities_monthly: mostReportedCitiesOfTheMonth, // array of the four most reported city of the month
-            last_four_tickets: lastFourTickets, // array of the last four tickets
+            tickets_count_today: totalTicketsToday, // total tickets today
+            tickets_count_month: totalTicketsMonth, // total tickets this month
+            //last_four_tickets: lastFourTickets, // array of the last four tickets
 
-            last_seven_days: null, // number of report per day for the last 7 days
+            // monthly_reports: monthlyReports, // total tickets this month
+            // tickets_reports_12_months: monthlyReports12, // array of reports for the last 12 months
+            // tickets_four_most_reported_cities_monthly: mostReportedCitiesOfTheMonth, // array of the four most reported city of the month
+
+            // last_seven_days: null, // number of report per day for the last 7 days
         }
 
         Logger.log(struct)
