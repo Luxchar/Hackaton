@@ -23,39 +23,24 @@ export const ticketGet = async (req: express.Request, res: express.Response) => 
         const lastFourTickets = await Ticket.find({}).sort({ datedecl: -1 }).limit(4).exec(); // last four tickets
 
         const today = new Date();
-        const totalTicketsToday = await Ticket.aggregate([
-            {
-              $match: {
-                datedecl: {
-                  $gte: new Date(today.getFullYear(), today.getMonth(), today.getDate()),
-                  $lt: new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1)
-                }
-              }
-            },
-            {
-              $group: {
-                _id: null,
-                count: { $sum: 1 }
-              }
-            }
-          ])        
 
-        const totalTicketsMonth = await Ticket.aggregate([
-            {
-              $match: {
-                datedecl: {
-                  $gte: new Date(today.getFullYear(), today.getMonth(), 1),
-                  $lt: new Date(today.getFullYear(), today.getMonth() + 1, 1)
-                }
-              }
-            },
-            {
-              $group: {
-                _id: null,
-                count: { $sum: 1 }
-              }
-            }
-          ])
+        console.log(today.getFullYear(), today.getMonth(), today.getDate())
+
+        const addZero = (i: number) => {
+          var result;
+          if (i < 10) {
+            result = "0" + i;
+          }
+          return result;
+        };
+        
+        // datedecl format is 2023-09
+        const month = today.getMonth();
+        const totalTicketsMonth = await Ticket.countDocuments({
+          datedecl: { $regex: `${today.getFullYear()}-${addZero(month + 1)}` },
+        }); // total tickets this month
+        console.log(`${today.getFullYear()}-${addZero(month + 1)}`);
+        const totalTicketsYear = await Ticket.countDocuments({ datedecl: { $regex: `${today.getFullYear()}` } }); // total tickets this year
 
         const monthlyReports = await Ticket.aggregate([
             {
@@ -66,11 +51,13 @@ export const ticketGet = async (req: express.Request, res: express.Response) => 
             }
           ])
 
+          console.log(totalTicketsMonth, totalTicketsYear)
+
         const struct = {
             user_count: users, // total users
             ticket_total: tickets, // total tickets
-            tickets_count_today: totalTicketsToday, // total tickets today
             tickets_count_month: totalTicketsMonth, // total tickets this month
+            tickets_count_year: totalTicketsYear, // total tickets this year
             last_four_tickets: lastFourTickets, // array of the last four tickets
 
             monthly_reports: monthlyReports, // total tickets this month

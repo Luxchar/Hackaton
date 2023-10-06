@@ -16,8 +16,8 @@ async function fetchTickets() {
 
     document.querySelector('#user_count').innerHTML = ticket.data.user_count
     document.querySelector('#ticket_total').innerHTML = ticket.data.ticket_total;
-    document.querySelector("#ticket_today").innerHTML = ticket.data.tickets_count_today.length;
-    document.querySelector("#ticket_month").innerHTML = ticket.data.tickets_count_month.length;
+    document.querySelector("#ticket_month").innerHTML = ticket.data.tickets_count_month;
+    document.querySelector("#ticket_year").innerHTML = ticket.data.tickets_count_year;
 
     for (i = 0; i < 4; i++) {
       document.querySelector('#' + 'city_' + i).innerHTML = ticket.data.last_four_tickets[i].ville;
