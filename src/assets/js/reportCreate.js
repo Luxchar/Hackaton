@@ -19,6 +19,20 @@ try {
   
     buttonListener.addEventListener('click', async function() {
         try {
+            console.log('fetching');
+            const token = localStorage.getItem('token');
+          
+            try {
+              const User = await hackaton.connect(token);
+              if (User.status === 'error') {
+                console.log('error');
+                window.location.href = 'http://localhost:8080/auth-login.html';
+              } 
+            } catch (error) {
+                console.error(error);
+                window.location.href = 'http://localhost:8080/auth-login.html';
+            }
+
             console.log("IN")
   
             const response = await hackaton.reportCreate(postal_codeSelector.value, addressSelector.value, citySelector.value, typeSelector.value, descriptionSelector.value, token)
